@@ -240,7 +240,7 @@ runs:
             echo "| PR Link               | ${{ steps.pr-details.outputs.PR_URL }} |"
           fi
 
-          if [ -z "${{ steps.marketplace-available.outputs.MARKETPLACE_COMMAND_EXIT_CODE }}" ] || [ "${{ steps.update-marketplace.outputs.MARKETPLACE_UPDATE_EXIT_CODE }}" -ne 0 ]; then
+          if [ -z "${{ steps.marketplace-available.outputs.MARKETPLACE_COMMAND_EXIT_CODE }}" ] || [ "${{ steps.marketplace-available.outputs.MARKETPLACE_COMMAND_EXIT_CODE }}" -ne 0 ]; then
             echo "| Made available in marketplace | ❌ |"
           else 
             echo "| Made available in marketplace | ✅ |"

@@ -6,7 +6,8 @@ This GitHub Action publishes an integration via Prismatic's Prism CLI.
 
 - **PRISMATIC_URL** (required): The target Prismatic API to publish to.
 - **PRISM_REFRESH_TOKEN** (required): The token granting access to the API at the PRISMATIC_URL provided.
-- **INTEGRATION_ID** (optional): The ID of the integration to be published.
+- **PATH_TO_YML** (required): The path to the integration yml file that is to be published.
+- **INTEGRATION_ID** (required): The ID of the integration to be published.
 - **SKIP_COMMIT_HASH_PUBLISH** (optional): Skip inclusion of commit hash in metadata. Default is `false`.
 - **SKIP_COMMIT_URL_PUBLISH** (optional): Skip inclusion of commit URL in metadata. Default is `false`.
 - **SKIP_REPO_URL_PUBLISH** (optional): Skip inclusion of repository URL in metadata. Default is `false`.
@@ -20,8 +21,10 @@ To use this action in your workflow, add the following step configuration to you
   - name: <STEP NAME>
     uses: prismatic-io/integration-publisher@v1
     with:
+      PATH_TO_YML: <PATH_TO_YML>
       PRISMATIC_URL: ${{ vars.PRISMATIC_URL }}
       PRISM_REFRESH_TOKEN: ${{ secrets.PRISM_REFRESH_TOKEN }}
+      INTEGRATION_ID: <INTEGRATION_ID>
 ```
 Optional inputs can be passed via the `with` block as desired. 
 

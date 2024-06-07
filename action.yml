@@ -1,5 +1,5 @@
-name: "Prism Import Integration and Publish"
-description: "Import and publish an integration via Prism"
+name: "Prismatic Integration Publisher"
+description: "Import and publish an integration via Prismatic's Prism CLI"
 
 inputs:
   INTEGRATION_ID:
@@ -35,7 +35,7 @@ inputs:
     required: false
     default: false
   OVERVIEW:
-    description: "Overview to described the purpose of the integration."
+    description: "Overview to describe the purpose of the integration."
     required: false
     default: ""
 

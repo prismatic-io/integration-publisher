@@ -7,7 +7,7 @@ This GitHub Action publishes an integration via Prismatic's Prism CLI.
 - **PRISMATIC_URL** (required): The target Prismatic API to publish to.
 - **PRISM_REFRESH_TOKEN** (required): The token granting access to the API at the PRISMATIC_URL provided.
 - **PATH_TO_YML** (required): The path to the integration yml file that is to be published.
-- **INTEGRATION_ID** (required): The ID of the integration to be published.
+- **INTEGRATION_ID** (required): The ID of the integration to be published. Corresponds to the Prismatic environment defined by the PRISMATIC_URL.
 - **SKIP_COMMIT_HASH_PUBLISH** (optional): Skip inclusion of commit hash in metadata. Default is `false`.
 - **SKIP_COMMIT_URL_PUBLISH** (optional): Skip inclusion of commit URL in metadata. Default is `false`.
 - **SKIP_REPO_URL_PUBLISH** (optional): Skip inclusion of repository URL in metadata. Default is `false`.

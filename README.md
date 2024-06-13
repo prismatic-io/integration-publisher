@@ -19,7 +19,7 @@ To use this action in your workflow, add the following step configuration to you
 
 ```yaml
   - name: <STEP NAME>
-    uses: prismatic-io/integration-publisher@v1
+    uses: prismatic-io/integration-publisher@v1.0
     with:
       PATH_TO_YML: <PATH_TO_YML>
       PRISMATIC_URL: ${{ vars.PRISMATIC_URL }}

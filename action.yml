@@ -1,5 +1,8 @@
 name: "Prismatic Integration Publisher"
 description: "Import and publish an integration via Prismatic's Prism CLI"
+branding:
+  icon: "upload-cloud"
+  color: "blue"
 
 inputs:
   INTEGRATION_ID:

@@ -183,6 +183,7 @@ runs:
         PRISM_REFRESH_TOKEN: ${{ inputs.PRISM_REFRESH_TOKEN }}
 
     - name: Publish Integration
+      id: publish-integration
       shell: bash
       run: |
         COMMAND="prism integrations:publish \"${{ inputs.INTEGRATION_ID }}\""
@@ -207,7 +208,8 @@ runs:
           COMMAND="$COMMAND --customer=${{ inputs.CUSTOMER_ID }}"
         fi
 
-        $COMMAND
+        OUTPUT=$($COMMAND)
+        echo "PUBLISHED_INTEGRATION_VERSION_ID=${OUTPUT}" >> $GITHUB_OUTPUT
       env:
         PRISMATIC_URL: ${{ inputs.PRISMATIC_URL }}
         PRISM_REFRESH_TOKEN: ${{ inputs.PRISM_REFRESH_TOKEN }}
@@ -220,7 +222,7 @@ runs:
         set +e
         source $GITHUB_WORKSPACE/logger.sh
         log $INFO "Updating the marketplace version..."
-        prism integrations:marketplace "${{ inputs.INTEGRATION_ID }}" --available --overview=${{ inputs.MARKETPLACE_OVERVIEW }}
+        prism integrations:marketplace "${{ steps.publish-integration.outputs.PUBLISHED_INTEGRATION_VERSION_ID }}" --available --overview=${{ inputs.MARKETPLACE_OVERVIEW }}
         EXIT_CODE=$?
         echo "MARKETPLACE_COMMAND_EXIT_CODE=$EXIT_CODE" >> $GITHUB_OUTPUT
       env:
@@ -235,6 +237,7 @@ runs:
           echo "|![Prismatic Logo](https://app.prismatic.io/logo_fullcolor_white.svg)| Publish Info |"
           echo "| --------------------- | --------------- |"
           echo "| Integration ID        | ${{ inputs.INTEGRATION_ID}} |"
+          echo "| Published Integration Version ID | ${{ steps.publish-integration.outputs.PUBLISHED_INTEGRATION_VERSION_ID }} |"
           echo "| Target Stack          | ${{ inputs.PRISMATIC_URL }} |"
           echo "| Designer Link         | ${{ inputs.PRISMATIC_URL }}/designer/${{ inputs.INTEGRATION_ID }} |"
           echo "| Commit Link           | ${{ steps.commit-details.outputs.COMMIT_URL }} |"

@@ -222,7 +222,7 @@ runs:
         set +e
         source $GITHUB_WORKSPACE/logger.sh
         log $INFO "Updating the marketplace version..."
-        prism integrations:marketplace "${{ steps.publish-integration.outputs.PUBLISHED_INTEGRATION_VERSION_ID }}" --available --overview=${{ inputs.MARKETPLACE_OVERVIEW }}
+        prism integrations:marketplace "${{ steps.publish-integration.outputs.PUBLISHED_INTEGRATION_VERSION_ID }}" --available --overview="${{ inputs.OVERVIEW }}"
         EXIT_CODE=$?
         echo "MARKETPLACE_COMMAND_EXIT_CODE=$EXIT_CODE" >> $GITHUB_OUTPUT
       env:

@@ -12,6 +12,7 @@ This GitHub Action publishes an integration via Prismatic's Prism CLI.
 - **SKIP_COMMIT_URL_PUBLISH** (optional): Skip inclusion of commit URL in metadata. Default is `false`.
 - **SKIP_REPO_URL_PUBLISH** (optional): Skip inclusion of repository URL in metadata. Default is `false`.
 - **SKIP_PULL_REQUEST_URL_PUBLISH** (optional): Skip inclusion of pull request URL in metadata. Default is `false`.
+- **OVERVIEW** (optional): Overview to describe the purpose of the integration.
 
 ## Example Usage
 

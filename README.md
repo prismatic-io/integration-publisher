@@ -12,7 +12,7 @@ This GitHub Action publishes an integration via Prismatic's Prism CLI.
 - **SKIP_COMMIT_URL_PUBLISH** (optional): Skip inclusion of commit URL in metadata. Default is `false`.
 - **SKIP_REPO_URL_PUBLISH** (optional): Skip inclusion of repository URL in metadata. Default is `false`.
 - **SKIP_PULL_REQUEST_URL_PUBLISH** (optional): Skip inclusion of pull request URL in metadata. Default is `false`.
-- **OVERVIEW** (optional): Overview to describe the purpose of the integration.
+- **OVERVIEW** (optional): Overview to describe the purpose of the integration (used in conjunction with <u>MAKE_AVAILABLE_IN_MARKETPLACE</u>).
 - **MAKE_AVAILABLE_IN_MARKETPLACE** (optional): Make version available in the marketplace.
 
 ## Example Usage
@@ -20,23 +20,27 @@ This GitHub Action publishes an integration via Prismatic's Prism CLI.
 To use this action in your workflow, add the following step configuration to your workflow file (this assumes that `PRISMATIC_URL` is stored in a Github environment's `variables` and that `PRISM_REFRESH_TOKEN` is stored in the same environment's `secrets`):
 
 ```yaml
-  - name: <STEP NAME>
-    uses: prismatic-io/integration-publisher@v1.0
-    with:
-      PATH_TO_YML: <PATH_TO_YML>
-      PRISMATIC_URL: ${{ vars.PRISMATIC_URL }}
-      PRISM_REFRESH_TOKEN: ${{ secrets.PRISM_REFRESH_TOKEN }}
-      INTEGRATION_ID: <INTEGRATION_ID>
+- name: <STEP NAME>
+  uses: prismatic-io/integration-publisher@v1.0
+  with:
+    PATH_TO_YML: <PATH_TO_YML>
+    PRISMATIC_URL: ${{ vars.PRISMATIC_URL }}
+    PRISM_REFRESH_TOKEN: ${{ secrets.PRISM_REFRESH_TOKEN }}
+    INTEGRATION_ID: <INTEGRATION_ID>
 ```
-Optional inputs can be passed via the `with` block as desired. 
+
+Optional inputs can be passed via the `with` block as desired.
 
 ## Acquiring PRISM_REFRESH_TOKEN
 
 To acquire a refresh token that will authenticate against the Prism CLI, run this command in a terminal (assuming you are authenticated with the CLI):
+
 ```
 prism me:token --type=refresh
 ```
+
 This will produce a token valid for the Prismatic stack that your CLI is currently configured to. To check which API Prism is currently configured for, run:
+
 ```
 prism me
 ```

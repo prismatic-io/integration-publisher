@@ -26,7 +26,7 @@ To use this action in your workflow, add the following step configuration to you
 
 ```yaml
 - name: <STEP NAME>
-  uses: prismatic-io/integration-publisher@v1.0
+  uses: prismatic-io/integration-publisher@<LATEST_VERSION>
   with:
     PATH_TO_YML: <PATH_TO_YML>
     PRISMATIC_URL: ${{ vars.PRISMATIC_URL }}
@@ -38,7 +38,7 @@ or
 
 ```yaml
 - name: <STEP NAME>
-  uses: prismatic-io/integration-publisher@v1.0
+  uses: prismatic-io/integration-publisher@<LATEST_VERSION>
   with:
     PATH_TO_CNI: <PATH_TO_CNI>
     PRISMATIC_URL: ${{ vars.PRISMATIC_URL }}

@@ -18,7 +18,7 @@ This GitHub Action publishes an integration via Prismatic's Prism CLI.
 
 ## PATH_TO_CNI vs PATH_TO_YML
 
-Use `PATH_TO_CNI` if publishing a Code Native Integration. Use `PATH_TO_YML` if publishing an integration defined in a YML file only. In the unlikely scenario that both are provided, `PATH_TO_YML` will take precedence. 
+Use `PATH_TO_CNI` if publishing a Code Native Integration. Use `PATH_TO_YML` if publishing an integration defined in a YML file only. In the unlikely scenario that both are provided, an error will be thrown. 
 
 ## Example Usage
 

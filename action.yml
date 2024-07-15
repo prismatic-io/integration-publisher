@@ -134,7 +134,7 @@ runs:
           log $INFO "INTEGRATION_ID: ${{ inputs.INTEGRATION_ID }}"
         fi
 
-    - name: Check if PATH_TO_YML is set
+    - name: Check if PATH_TO_YML or PATH_TO_CNI is set
       shell: bash
       run: |
         source $GITHUB_WORKSPACE/logger.sh

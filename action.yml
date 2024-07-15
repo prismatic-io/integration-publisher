@@ -10,7 +10,10 @@ inputs:
     required: true
   PATH_TO_YML:
     description: "Path to the YAML file containing the integration configuration."
-    required: true
+    required: false
+  PATH_TO_CNI:
+    description: "The path to the Code Native Integration source code, usually the same location as the CNI's package.json. If not provided, the root will be used."
+    required: false
   PRISMATIC_URL:
     description: "The target Prismatic API to import to."
     required: true
@@ -131,15 +134,19 @@ runs:
           log $INFO "INTEGRATION_ID: ${{ inputs.INTEGRATION_ID }}"
         fi
 
-    - name: Check if PATH_TO_YML is set
+    - name: Check if PATH_TO_YML or PATH_TO_CNI is set
       shell: bash
       run: |
         source $GITHUB_WORKSPACE/logger.sh
-        if [ -z "${{ inputs.PATH_TO_YML }}" ]; then
-          log $ERROR "PATH_TO_YML is not set"
+        if [ -z "${{ inputs.PATH_TO_YML }}" ] && [ -z "${{ inputs.PATH_TO_CNI }}" ]; then
+          log $ERROR "Neither PATH_TO_YML nor PATH_TO_CNI is set"
+          exit 1
+        elif [ -n "${{ inputs.PATH_TO_CNI }}" ] && [ -n "${{ inputs.PATH_TO_YML }}" ]; then
+          log $ERROR "Both PATH_TO_YML and PATH_TO_CNI have been provided. Please provide only one of these inputs."
           exit 1
         else
-          log $INFO "PATH_TO_YML: ${{ inputs.PATH_TO_YML }}"
+          [ -n "${{ inputs.PATH_TO_YML }}" ] && log $INFO "PATH_TO_YML: $PATH_TO_YML"
+          [ -n "${{ inputs.PATH_TO_CNI }}" ] && log $INFO "Publishing CNI. PATH_TO_CNI: $PATH_TO_CNI"
         fi
 
     - name: Print logo to console once
@@ -177,7 +184,15 @@ runs:
     - name: Import Integration
       shell: bash
       run: |
-        prism integrations:import -i="${{ inputs.INTEGRATION_ID }}" -p="${{ inputs.PATH_TO_YML }}"
+        if [ -n "${{ inputs.PATH_TO_YML }}" ]; then
+          prism integrations:import -i="${{ inputs.INTEGRATION_ID }}" -p="${{ inputs.PATH_TO_YML }}"
+        elif [ -n "${{ inputs.PATH_TO_CNI }}" ]; then
+          cd "${{ inputs.PATH_TO_CNI }}"
+          prism integrations:import -i="${{ inputs.INTEGRATION_ID }}"
+        else
+          echo "Neither PATH_TO_YML nor PATH_TO_CNI is set"
+          exit 1
+        fi
       env:
         PRISMATIC_URL: ${{ inputs.PRISMATIC_URL }}
         PRISM_REFRESH_TOKEN: ${{ inputs.PRISM_REFRESH_TOKEN }}
@@ -186,6 +201,18 @@ runs:
       id: publish-integration
       shell: bash
       run: |
+        CURRENT_DIR=$(realpath "$PWD")
+
+        if [ -n "${{ inputs.PATH_TO_CNI }}" ]; then
+          TARGET_DIR=$(realpath "${{ inputs.PATH_TO_CNI }}")
+        else
+          TARGET_DIR="$CURRENT_DIR"
+        fi
+
+        if [ "$CURRENT_DIR" != "$TARGET_DIR" ]; then
+          cd "$TARGET_DIR"
+        fi
+
         COMMAND="prism integrations:publish \"${{ inputs.INTEGRATION_ID }}\""
 
         if [ "${{ inputs.SKIP_COMMIT_HASH_PUBLISH }}" = "false" ]; then

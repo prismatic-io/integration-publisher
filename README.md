@@ -48,6 +48,21 @@ or
 
 Optional inputs can be passed via the `with` block as desired.
 
+### Additional Workflow Steps - CNI only
+
+The following steps are an example of preparing the CNI bundle prior to publishing via this action. The `working-directory` will likely match the `PATH_TO_CNI` input passed to the integration-publisher action.
+```yaml
+  - uses: actions/checkout@v4
+
+  - name: Install dependencies
+    run: npm install
+    working-directory: src/my-cni
+
+  - name: Build integration bundle
+    run: npm run build
+    working-directory: src/my-cni
+```
+
 ## Acquiring PRISM_REFRESH_TOKEN
 
 To acquire a refresh token that will authenticate against the Prism CLI, run this command in a terminal (assuming you are authenticated with the CLI):

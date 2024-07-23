@@ -144,9 +144,10 @@ runs:
         elif [ -n "${{ inputs.PATH_TO_CNI }}" ] && [ -n "${{ inputs.PATH_TO_YML }}" ]; then
           log $ERROR "Both PATH_TO_YML and PATH_TO_CNI have been provided. Please provide only one of these inputs."
           exit 1
-        else
-          [ -n "${{ inputs.PATH_TO_YML }}" ] && log $INFO "PATH_TO_YML: $PATH_TO_YML"
-          [ -n "${{ inputs.PATH_TO_CNI }}" ] && log $INFO "Publishing CNI. PATH_TO_CNI: $PATH_TO_CNI"
+        elif [ -n "${{ inputs.PATH_TO_YML }}" ]; then
+          log $INFO "PATH_TO_YML: ${{ inputs.PATH_TO_YML }}"
+        elif [ -n "${{ inputs.PATH_TO_CNI }}" ]; then
+          log $INFO "Publishing code-native integration. PATH_TO_CNI: ${{ inputs.PATH_TO_CNI }}"
         fi
 
     - name: Print logo to console once

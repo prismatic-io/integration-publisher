@@ -6,6 +6,7 @@ This GitHub Action publishes an integration via Prismatic's Prism CLI.
 
 - **PRISMATIC_URL** (required): The target Prismatic API to publish to.
 - **PRISM_REFRESH_TOKEN** (required): The token granting access to the API at the PRISMATIC_URL provided.
+- **PRISMATIC_TENANT_ID** (optional): The tenant ID to use when publishing the integration. Required if your user is associated with multiple tenants in a single region. Use `prism me` to find your tenant ID.
 - **PATH_TO_CNI** (optional): The path to the Code Native Integration source code, usually the same location as the CNI's package.json. If not provided, the root will be used.
 - **PATH_TO_YML** (optional): The path to the integration yml file that is to be published.
 - **INTEGRATION_ID** (required): The ID of the integration to be published. Corresponds to the Prismatic environment defined by the PRISMATIC_URL.
@@ -64,7 +65,7 @@ The following steps are an example of preparing the CNI bundle prior to publishi
   working-directory: src/my-cni
 ```
 
-## Acquiring PRISM_REFRESH_TOKEN
+## Acquiring PRISM_REFRESH_TOKEN and PRISMATIC_TENANT_ID
 
 To acquire a refresh token that will authenticate against the Prism CLI, run this command in a terminal (assuming you are authenticated with the CLI):
 
@@ -72,7 +73,9 @@ To acquire a refresh token that will authenticate against the Prism CLI, run thi
 prism me:token --type=refresh
 ```
 
-This will produce a token valid for the Prismatic stack that your CLI is currently configured to. To check which API Prism is currently configured for, run:
+This will produce a token valid for the Prismatic stack that your CLI is currently configured to.
+
+To check which API Prism is currently configured for, and to fetch your tenant ID, run:
 
 ```
 prism me

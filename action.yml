@@ -47,6 +47,10 @@ inputs:
     description: "Overview to describe the purpose of the integration."
     required: false
     default: ""
+  COMMENT:
+    description: "A comment to include with the published version."
+    required: false
+    default: ""
   PRISM_VERSION:
     description: "The version of the Prism CLI to install. Defaults to ^9."
     required: false
@@ -242,6 +246,10 @@ runs:
 
         if [ -n "${{ inputs.CUSTOMER_ID }}" ]; then
           COMMAND="$COMMAND --customer=${{ inputs.CUSTOMER_ID }}"
+        fi
+
+        if [ -n "${{ inputs.COMMENT }}" ]; then
+          COMMAND="$COMMAND --comment=\"${{ inputs.COMMENT }}\""
         fi
 
         OUTPUT=$($COMMAND)

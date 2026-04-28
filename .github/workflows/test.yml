@@ -1,0 +1,41 @@
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: jdx/mise-action@v4
+      - name: Run lint + bats
+        run: mise run test
+
+  action-smoke:
+    # End-to-end exercise of the composite action against stubbed `prism` and
+    # `npm`. Catches wiring bugs in action.yml (env passthrough, action_path,
+    # input names) that the bats tests don't see because they hit the script
+    # directly.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install stub prism on PATH
+        run: tests/install-stubs.sh
+      - name: Run the composite action
+        uses: ./
+        with:
+          INTEGRATION_ID: smoke_int
+          PATH_TO_YML: tests/fixtures/integration.yml
+          PRISMATIC_URL: https://example.invalid
+          PRISM_REFRESH_TOKEN: fake-refresh-token
+          TEST_API_KEYS: |
+            flowA: keyA
+            flowB: keyB with spaces
+            Customer Webhook: keyC
+      - name: Assert prism received the expected import argv
+        run: tests/assert-prism-import.sh

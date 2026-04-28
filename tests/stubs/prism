@@ -1,6 +1,23 @@
 #!/usr/bin/env bash
-# Stub `prism` for action-smoke CI: captures argv to RUNNER_TEMP/prism-calls/
-# and emits a fake version ID so the publish step can parse stdout.
+# Stub `prism` for action-smoke CI: captures argv to RUNNER_TEMP/prism-calls/.
+#
+# Per-subcommand behavior overrides for smoke job variants:
+#   PRISM_STUB_PUBLISH_STDOUT      stdout for integrations:publish (default: a fake version ID)
+#   PRISM_STUB_PUBLISH_EXIT        exit code for integrations:publish (default 0)
+#   PRISM_STUB_MARKETPLACE_EXIT    exit code for integrations:marketplace (default 0)
+
 out="$RUNNER_TEMP/prism-calls/$(date +%s%N)-$$"
 { printf '%s\0' "$@"; } > "$out"
-echo "fakeIntegrationVersionId"
+
+case "$1" in
+  integrations:publish)
+    echo "${PRISM_STUB_PUBLISH_STDOUT:-fakeIntegrationVersionId}"
+    exit "${PRISM_STUB_PUBLISH_EXIT:-0}"
+    ;;
+  integrations:marketplace)
+    exit "${PRISM_STUB_MARKETPLACE_EXIT:-0}"
+    ;;
+  *)
+    exit 0
+    ;;
+esac

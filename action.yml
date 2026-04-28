@@ -55,6 +55,17 @@ inputs:
     description: "The version of the Prism CLI to install. Defaults to ^9."
     required: false
     default: "^9"
+  TEST_API_KEYS:
+    description: |
+      Test API keys to associate with flows for test executions. A YAML
+      mapping of flow name to API key, passed as a `|` block scalar
+      (GitHub Actions inputs are string-typed; the `|` delivers the map
+      as a literal multi-line string for the action to parse). See README
+      for the full pattern. Flow names with spaces are supported.
+      Neither side may contain a literal `"`. Pass via secrets — do not
+      hard-code.
+    required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -109,7 +120,7 @@ runs:
     # Node may be installed in the parent workflow. This ensures the version is what Prism expects.
     # This action will use a cached version if available.
     - name: Set up Node using Github Action
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: "22"
 
@@ -186,7 +197,7 @@ runs:
       shell: bash
       run: |
         source $GITHUB_WORKSPACE/logger.sh
-        if ! npm list -g @prismatic-io/prism &> /dev/null; then
+        if ! command -v prism &> /dev/null; then
           log $INFO "\U1F527 Prism CLI is not installed. Installing..."
           npm install --global @prismatic-io/prism@${{ inputs.PRISM_VERSION }}
         else
@@ -195,20 +206,15 @@ runs:
 
     - name: Import Integration
       shell: bash
-      run: |
-        if [ -n "${{ inputs.PATH_TO_YML }}" ]; then
-          prism integrations:import -i="${{ inputs.INTEGRATION_ID }}" -p="${{ inputs.PATH_TO_YML }}"
-        elif [ -n "${{ inputs.PATH_TO_CNI }}" ]; then
-          cd "${{ inputs.PATH_TO_CNI }}"
-          prism integrations:import -i="${{ inputs.INTEGRATION_ID }}"
-        else
-          echo "Neither PATH_TO_YML nor PATH_TO_CNI is set"
-          exit 1
-        fi
+      run: ${{ github.action_path }}/scripts/import.sh
       env:
         PRISMATIC_URL: ${{ inputs.PRISMATIC_URL }}
         PRISM_REFRESH_TOKEN: ${{ inputs.PRISM_REFRESH_TOKEN }}
         PRISMATIC_TENANT_ID: ${{ inputs.PRISMATIC_TENANT_ID }}
+        INTEGRATION_ID: ${{ inputs.INTEGRATION_ID }}
+        PATH_TO_YML: ${{ inputs.PATH_TO_YML }}
+        PATH_TO_CNI: ${{ inputs.PATH_TO_CNI }}
+        TEST_API_KEYS: ${{ inputs.TEST_API_KEYS }}
 
     - name: Publish Integration
       id: publish-integration

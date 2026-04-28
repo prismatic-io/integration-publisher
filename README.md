@@ -16,6 +16,7 @@ This GitHub Action publishes an integration via Prismatic's Prism CLI.
 - **SKIP_PULL_REQUEST_URL_PUBLISH** (optional): Skip inclusion of pull request URL in metadata. Default is `false`.
 - **OVERVIEW** (optional): Overview to describe the purpose of the integration (used in conjunction with <u>MAKE_AVAILABLE_IN_MARKETPLACE</u>).
 - **MAKE_AVAILABLE_IN_MARKETPLACE** (optional): Make version available in the marketplace.
+- **TEST_API_KEYS** (optional): Test API keys to associate with flows for test executions. A YAML mapping of `flowName: API_KEY`, passed as a `|` block scalar — see [Providing test API keys](#providing-test-api-keys) for the pattern and the rationale for `|`. Pass via secrets — do not hard-code.
 
 ## PATH_TO_CNI vs PATH_TO_YML
 
@@ -80,6 +81,27 @@ To check which API Prism is currently configured for, and to fetch your tenant I
 ```
 prism me
 ```
+
+## Providing test API keys
+
+`TEST_API_KEYS` lets a CI run import an integration with per-flow API keys for test executions. Pass a YAML mapping inside a `|` block scalar — flow name on the left, API key on the right. The action handles prism's required quoting internally.
+
+```yaml
+- uses: prismatic-io/integration-publisher@<LATEST_VERSION>
+  with:
+    PATH_TO_CNI: <PATH_TO_CNI>
+    PRISMATIC_URL: ${{ vars.PRISMATIC_URL }}
+    PRISM_REFRESH_TOKEN: ${{ secrets.PRISM_REFRESH_TOKEN }}
+    INTEGRATION_ID: <INTEGRATION_ID>
+    TEST_API_KEYS: |
+      orderSync: ${{ secrets.ORDER_SYNC_TEST_KEY }}
+      inventoryPoll: ${{ secrets.INVENTORY_POLL_TEST_KEY }}
+      Customer Webhook: ${{ secrets.CUSTOMER_WEBHOOK_TEST_KEY }}
+```
+
+> **Note:** while this looks like a map, GitHub Actions limitations mean it's actually a string — keep the leading `|` so YAML treats it as one. Without it the workflow fails with `A mapping was not expected`.
+
+Values are passed to the action via an environment variable (not interpolated into a shell command), so secrets containing shell metacharacters are safe. The only restriction is that flow names and keys may not contain literal `"` characters (a prism parser limitation).
 
 ## What is Prismatic?
 

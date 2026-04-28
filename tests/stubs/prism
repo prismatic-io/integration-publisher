@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Stub `prism` for action-smoke CI: captures argv to RUNNER_TEMP/prism-calls/
+# and emits a fake version ID so the publish step can parse stdout.
+out="$RUNNER_TEMP/prism-calls/$(date +%s%N)-$$"
+{ printf '%s\0' "$@"; } > "$out"
+echo "fakeIntegrationVersionId"

@@ -1,0 +1,17 @@
+[tools]
+bats = "1.13.0"
+shellcheck = "0.11.0"
+yq = "4.45.4"
+jq = "1.7.1"
+
+[tasks.lint]
+description = "Static-check shell scripts with shellcheck"
+run = "shellcheck scripts/*.sh tests/*.sh tests/stubs/*"
+
+[tasks.bats]
+description = "Run bats unit tests"
+run = "bats tests/"
+
+[tasks.test]
+description = "Run all checks (lint + bats)"
+depends = ["lint", "bats"]

@@ -7,6 +7,7 @@ This GitHub Action publishes an integration via Prismatic's Prism CLI.
 - **PRISMATIC_URL** (required): The target Prismatic API to publish to.
 - **PRISM_REFRESH_TOKEN** (required): The token granting access to the API at the PRISMATIC_URL provided.
 - **PRISMATIC_TENANT_ID** (optional): The tenant ID to use when publishing the integration. Required if your user is associated with multiple tenants in a single region. Use `prism me` to find your tenant ID.
+- **CUSTOMER_ID** (optional): Customer ID to associate with the published version.
 - **PATH_TO_CNI** (optional): The path to the Code Native Integration source code, usually the same location as the CNI's package.json. If not provided, the root will be used.
 - **PATH_TO_YML** (optional): The path to the integration yml file that is to be published.
 - **INTEGRATION_ID** (required): The ID of the integration to be published. Corresponds to the Prismatic environment defined by the PRISMATIC_URL.
@@ -16,6 +17,8 @@ This GitHub Action publishes an integration via Prismatic's Prism CLI.
 - **SKIP_PULL_REQUEST_URL_PUBLISH** (optional): Skip inclusion of pull request URL in metadata. Default is `false`.
 - **OVERVIEW** (optional): Overview to describe the purpose of the integration (used in conjunction with <u>MAKE_AVAILABLE_IN_MARKETPLACE</u>).
 - **MAKE_AVAILABLE_IN_MARKETPLACE** (optional): Make version available in the marketplace.
+- **COMMENT** (optional): A comment to include with the published version.
+- **PRISM_VERSION** (optional): The version of the Prism CLI to install. Defaults to `^9`.
 - **TEST_API_KEYS** (optional): Test API keys to associate with flows for test executions. A YAML mapping of `flowName: API_KEY`, passed as a `|` block scalar — see [Providing test API keys](#providing-test-api-keys) for the pattern and the rationale for `|`. Pass via secrets — do not hard-code.
 
 ## PATH_TO_CNI vs PATH_TO_YML
@@ -55,7 +58,7 @@ Optional inputs can be passed via the `with` block as desired.
 The following steps are an example of preparing the CNI bundle prior to publishing via this action. The `working-directory` will likely match the `PATH_TO_CNI` input passed to the integration-publisher action.
 
 ```yaml
-- uses: actions/checkout@v4
+- uses: actions/checkout@v5
 
 - name: Install dependencies
   run: npm install

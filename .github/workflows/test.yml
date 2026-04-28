@@ -5,9 +5,13 @@ on:
   push:
     branches: [main]
 
+permissions: {}
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v5
       - uses: jdx/mise-action@v4
@@ -15,27 +19,79 @@ jobs:
         run: mise run test
 
   action-smoke:
-    # End-to-end exercise of the composite action against stubbed `prism` and
-    # `npm`. Catches wiring bugs in action.yml (env passthrough, action_path,
-    # input names) that the bats tests don't see because they hit the script
-    # directly.
+    # End-to-end exercise of the composite action against a stubbed `prism`.
+    # Catches wiring bugs in action.yml (env passthrough, action_path,
+    # input names, step output handoff) that the bats tests don't see
+    # because they hit the scripts directly.
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pull-requests: read
     steps:
       - uses: actions/checkout@v5
       - name: Install stub prism on PATH
         run: tests/install-stubs.sh
       - name: Run the composite action
+        id: action
         uses: ./
         with:
           INTEGRATION_ID: smoke_int
           PATH_TO_YML: tests/fixtures/integration.yml
           PRISMATIC_URL: https://example.invalid
           PRISM_REFRESH_TOKEN: fake-refresh-token
+          CUSTOMER_ID: cust_smoke
+          COMMENT: smoke comment
+          MAKE_AVAILABLE_IN_MARKETPLACE: "true"
+          OVERVIEW: Smoke overview
           TEST_API_KEYS: |
             flowA: keyA
             flowB: keyB with spaces
             Customer Webhook: keyC
-      - name: Assert prism received the expected import argv
-        run: tests/assert-prism-import.sh
+      - name: Assert prism received the expected argv
+        run: tests/assert-prism-calls.sh
+      - name: Assert PUBLISHED_INTEGRATION_VERSION_ID output
+        env:
+          VERSION_ID: ${{ steps.action.outputs.PUBLISHED_INTEGRATION_VERSION_ID }}
+        run: |
+          if [[ "$VERSION_ID" != "fakeIntegrationVersionId" ]]; then
+            echo "::error::expected PUBLISHED_INTEGRATION_VERSION_ID=fakeIntegrationVersionId, got '$VERSION_ID'"
+            exit 1
+          fi
+
+  action-smoke-marketplace-fail:
+    # Variant: integrations:marketplace exits non-zero. Verifies the
+    # deliberate "marketplace failure does not fail the action" behavior
+    # and that the exit code surfaces in the action output.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install stub prism on PATH
+        run: tests/install-stubs.sh
+      - name: Run the composite action
+        id: action
+        uses: ./
+        env:
+          PRISM_STUB_MARKETPLACE_EXIT: "1"
+        with:
+          INTEGRATION_ID: smoke_int
+          PATH_TO_YML: tests/fixtures/integration.yml
+          PRISMATIC_URL: https://example.invalid
+          PRISM_REFRESH_TOKEN: fake-refresh-token
+          MAKE_AVAILABLE_IN_MARKETPLACE: "true"
+          OVERVIEW: Smoke overview
+      # Reaching this step proves the action did not propagate the
+      # marketplace step's non-zero exit. The grep proves the marketplace
+      # step actually ran (i.e., we exercised the failure path, not just
+      # skipped it).
+      - name: Verify marketplace was attempted
+        run: |
+          for f in "$RUNNER_TEMP"/prism-calls/*; do
+            if tr '\0' '\n' < "$f" | grep -qx 'integrations:marketplace'; then
+              exit 0
+            fi
+          done
+          echo "::error::no integrations:marketplace call captured"
+          exit 1

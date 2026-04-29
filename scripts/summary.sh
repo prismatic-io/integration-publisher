@@ -14,11 +14,19 @@ skip_row() {
   fi
 }
 
+source_label="${PATH_TO_CNI:-${PATH_TO_YML:-$INTEGRATION_ID}}"
+
 {
   echo "### Integration Published :rocket:"
+  echo "#### \`$source_label\`"
   echo "|![Prismatic Logo](https://app.prismatic.io/logo_fullcolor_white.svg)| Publish Info |"
   echo "| --------------------- | --------------- |"
   echo "| Integration ID        | $INTEGRATION_ID |"
+  if [[ -n "${PATH_TO_CNI:-}" ]]; then
+    echo "| Source Directory      | $PATH_TO_CNI |"
+  elif [[ -n "${PATH_TO_YML:-}" ]]; then
+    echo "| Source File           | $PATH_TO_YML |"
+  fi
   echo "| Published Integration Version ID | ${VERSION_ID:-} |"
   echo "| Target Stack          | $PRISMATIC_URL |"
   echo "| Designer Link         | $PRISMATIC_URL/designer/$INTEGRATION_ID |"

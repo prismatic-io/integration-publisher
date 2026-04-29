@@ -161,6 +161,8 @@ runs:
         VERSION_ID: ${{ steps.publish-integration.outputs.PUBLISHED_INTEGRATION_VERSION_ID }}
         PRISMATIC_URL: ${{ inputs.PRISMATIC_URL }}
         PRISMATIC_TENANT_ID: ${{ inputs.PRISMATIC_TENANT_ID }}
+        PATH_TO_YML: ${{ inputs.PATH_TO_YML }}
+        PATH_TO_CNI: ${{ inputs.PATH_TO_CNI }}
         COMMIT_URL: ${{ steps.scm.outputs.COMMIT_URL }}
         PR_URL: ${{ steps.scm.outputs.PR_URL }}
         SKIP_COMMIT_HASH_PUBLISH: ${{ inputs.SKIP_COMMIT_HASH_PUBLISH }}
